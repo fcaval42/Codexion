@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:45:24 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/27 16:54:51 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/28 17:15:42 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ long	ft_atol(const char *str)
 	result = 0;
 	if (*str == '+')
 		str++;
-	while(ft_is_digit(*str))
+	while (ft_is_digit(*str))
 	{
 		result = result * 10 + (*str - '0');
 		str++;
@@ -38,10 +38,10 @@ int	ft_is_valid_integer(const char *str)
 		str++;
 	if (!str || !*str)
 		return (0);
-	while(*str)
+	while (*str)
 	{
 		if (!ft_is_digit(*str))
-			return(0);
+			return (0);
 		str++;
 	}
 	return (1);
