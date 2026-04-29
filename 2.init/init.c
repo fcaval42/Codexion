@@ -6,13 +6,13 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 13:29:13 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/28 17:15:51 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/29 15:05:02 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int	init_dongles(t_sim *sim)
+static int	init_dongles(t_sim *sim)
 {
 	int	n;
 	int	i;
@@ -36,7 +36,7 @@ int	init_dongles(t_sim *sim)
 	return (1);
 }
 
-int	init_coders(t_sim *sim)
+static int	init_coders(t_sim *sim)
 {
 	int	n;
 	int	i;
@@ -55,7 +55,9 @@ int	init_coders(t_sim *sim)
 		sim->coders[i].left = (&sim->dongles[i]);
 		sim->coders[i].right = (&sim->dongles[(i + 1) % n]);
 		sim->coders[i].sim = sim;
+		i++;
 	}
+	return (1);
 }
 
 int	init_sim(t_sim *sim, t_args *args)
@@ -67,7 +69,7 @@ int	init_sim(t_sim *sim, t_args *args)
 		return (0);
 	if (pthread_mutex_init(&sim->stop_mutex, NULL) != 0)
 		return (0);
-	if (!init_dongle(sim))
+	if (!init_dongles(sim))
 		return (0);
 	if (!init_coders(sim))
 		return (0);

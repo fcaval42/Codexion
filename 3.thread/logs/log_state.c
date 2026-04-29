@@ -1,20 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   coder.c                                            :+:      :+:    :+:   */
+/*   log_state.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/28 17:44:03 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/28 17:45:29 by fcaval           ###   ########.fr       */
+/*   Created: 2026/04/29 13:30:40 by fcaval            #+#    #+#             */
+/*   Updated: 2026/04/29 15:01:47 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	coder_routine(void	*arg)
+void	log_state(t_sim *sim, int coder_id, const char *state)
 {
-	t_coder	*coder;
+	long	ts;
 
-	
+	ts = get_time_ms() - sim->start_ms;
+	pthread_mutex_lock(&sim->log_mutex);
+	printf("%ld %d %s\n", ts, coder_id, state);
+	pthread_mutex_unlock(&sim->log_mutex);
 }

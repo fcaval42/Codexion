@@ -6,14 +6,21 @@
 #    By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/04/28 10:07:26 by fcaval            #+#    #+#              #
-#    Updated: 2026/04/28 13:29:25 by fcaval           ###   ########.fr        #
+#    Updated: 2026/04/29 14:33:15 by fcaval           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME    = codexion
 CC      = cc
-CFLAGS  = -Wall -Wextra -Werror
-SRCS    = main.c parsing.c utils.c init.c
+CFLAGS  = -Wall -Wextra -Werror -I.
+SRCS    = main.c \
+          1.parsing/parsing.c \
+          1.parsing/utils.c \
+          2.init/init.c \
+          3.thread/coder.c \
+          3.thread/sim_state.c \
+          3.thread/logs/logs.c \
+          3.thread/logs/log_state.c
 OBJS    = $(SRCS:.c=.o)
 HEADER  = codexion.h
 

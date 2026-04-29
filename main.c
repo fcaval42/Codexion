@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 11:27:06 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/28 17:43:24 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/29 14:51:52 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	lauch_threads(t_sim *sim)
 {
 	int	i;
 
-	sim->start_ms = get_start_ms();
+	sim->start_ms = get_time_ms();
 	i = 0;
 	while (i < sim->args.nb_coders)
 	{
@@ -51,17 +51,17 @@ int	main(int argc, char **argv)
 	if (!init_sim(&sim, &args))
 	{
 		ft_putstr_err("⚠️ Error: simulation initialisation failed.\n");
-		cleanup_sim(&sim);
+		clean_sim(&sim);
 		return (1);
 	}
 	if (!lauch_threads(&sim))
 	{
 		ft_putstr_err("⚠️ Error: thread creation failed.\n");
-		cleanup_sim(&sim);
+		clean_sim(&sim);
 		return (1);
 	}
 	join_threads(&sim);
-	cleanup_sim(&sim);
+	clean_sim(&sim);
 	return (0);
 }
 
