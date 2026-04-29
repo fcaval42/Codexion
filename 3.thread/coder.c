@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:44:03 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/29 14:34:21 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/29 16:58:16 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	all_done(t_sim *sim)
 	int	i;
 
 	i = 0;
-	while(i < sim->args.nb_coders)
+	while (i < sim->args.nb_coders)
 	{
 		if (sim->coders[i].compile_count < sim->args.nb_compiles_required)
 			return (0);
@@ -88,11 +88,11 @@ void	*coder_routine(void *arg)
 		if (second != first)
 			pthread_mutex_lock(&second->mutex);
 		if (!do_compile(coder))
-			break;
+			break ;
 		if (!do_debug(coder))
-			break;
+			break ;
 		if (!do_refactor(coder))
-			break;
+			break ;
 	}
 	return (NULL);
 }

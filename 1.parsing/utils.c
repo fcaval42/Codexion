@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:45:24 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/29 15:06:25 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/29 16:57:17 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	ft_putstr_err(const char *message)
 long	get_time_ms(void)
 {
 	struct timeval	tv;
- 
+
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000L + tv.tv_usec / 1000L);
 }

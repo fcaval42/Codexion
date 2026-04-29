@@ -1,153 +1,294 @@
-#include "../include/heap.h"
+/*
+** ================================================================
+** BROUILLON SIMPLE POUR LE HEAP
+** ================================================================
+**
+** Ce fichier est volontairement a part pour qu'on avance sans toucher
+** au reste du projet.
+**
+** A quoi sert ce heap dans Codexion ?
+** - a garder une liste de coders en attente
+** - a toujours recuperer celui qui doit passer en premier
+**
+** Dans le sujet :
+** - FIFO : le premier arrive est servi en premier
+** - EDF  : la plus petite deadline passe en premier
+**
+** Ce fichier n'est pas encore branche au projet.
+** Pour l'instant, il sert de base simple a comprendre.
+**
+** PLUS TARD :
+** - les structures + prototypes iront dans "heap.h"
+** - les fonctions iront dans "heap.c"
+** - l'utilisation de heap_push / heap_pop sera branchee dans la
+**   logique d'attente des dongles
+*/
 
-/* ── Comparator ──────────────────────────────────────────────────── */
+#include <stdlib.h>
 
 /*
-** Returns 1 if entry A has higher priority than entry B
-** (i.e. should be closer to the root = served first).
+** ================================================================
+** STRUCTURES
+** ================================================================
 **
-** Primary  : smaller priority value wins (earlier timestamp or deadline).
-** Secondary: smaller seq wins (earlier insertion = tie-breaker).
+** Ces structures devront plus tard aller dans "heap.h".
 **
-** This tie-breaker makes the scheduler fully deterministic even when
-** two coders register at the exact same millisecond.
+** priority :
+** - en FIFO : on peut mettre un compteur d'arrivee
+** - en EDF  : on peut mettre la deadline du coder
+**
+** seq :
+** - sert a departager deux priorites egales
+** - le plus ancien gagne
+**
+** coder_id :
+** - identifiant du coder concerne
 */
-static int	higher_prio(t_heap_entry *a, t_heap_entry *b)
+
+typedef struct s_heap_entry
 {
-	if (a->priority != b->priority)
-		return (a->priority < b->priority);
-	return (a->seq < b->seq);
+	long			priority;
+	unsigned long	seq;
+	int				coder_id;
+}	t_heap_entry;
+
+typedef struct s_heap
+{
+	t_heap_entry	*data;
+	int				size;
+	int				capacity;
+	unsigned long	next_seq;
+}	t_heap;
+
+/*
+** ================================================================
+** PROTOTYPES
+** ================================================================
+**
+** Ces prototypes devront plus tard aller dans "heap.h".
+*/
+
+int		heap_init(t_heap *heap, int capacity);
+void	heap_destroy(t_heap *heap);
+int		heap_push(t_heap *heap, long priority, int coder_id);
+int		heap_pop(t_heap *heap, t_heap_entry *out);
+int		heap_peek(t_heap *heap, t_heap_entry *out);
+int		heap_empty(t_heap *heap);
+
+/*
+** ================================================================
+** FONCTIONS INTERNES
+** ================================================================
+**
+** Ces fonctions peuvent rester "static" dans "heap.c".
+*/
+
+static int	has_higher_priority(t_heap_entry a, t_heap_entry b)
+{
+	if (a.priority < b.priority)
+		return (1);
+	if (a.priority > b.priority)
+		return (0);
+	return (a.seq < b.seq);
 }
 
-/* ── Index helpers ───────────────────────────────────────────────── */
-
-static int	parent(int i)
+static int	parent_index(int index)
 {
-	return ((i - 1) / 2);
+	return ((index - 1) / 2);
 }
 
-static int	left(int i)
+static int	left_index(int index)
 {
-	return (2 * i + 1);
+	return (2 * index + 1);
 }
 
-static int	right(int i)
+static int	right_index(int index)
 {
-	return (2 * i + 2);
+	return (2 * index + 2);
 }
 
-/* ── Swap ────────────────────────────────────────────────────────── */
-
-static void	swap(t_heap *h, int i, int j)
+static void	swap_entries(t_heap *heap, int a, int b)
 {
 	t_heap_entry	tmp;
 
-	tmp = h->data[i];
-	h->data[i] = h->data[j];
-	h->data[j] = tmp;
+	tmp = heap->data[a];
+	heap->data[a] = heap->data[b];
+	heap->data[b] = tmp;
 }
 
-/* ── Bubble up (after push) ──────────────────────────────────────── */
-
 /*
-** New element is at index `i`.
-** Keep swapping with parent while we have higher priority than parent.
+** Fait remonter l'element tant qu'il est plus prioritaire que son parent.
 */
-static void	sift_up(t_heap *h, int i)
+static void	sift_up(t_heap *heap, int index)
 {
-	while (i > 0 && higher_prio(&h->data[i], &h->data[parent(i)]))
+	int	parent;
+
+	while (index > 0)
 	{
-		swap(h, i, parent(i));
-		i = parent(i);
+		parent = parent_index(index);
+		if (!has_higher_priority(heap->data[index], heap->data[parent]))
+			break ;
+		swap_entries(heap, index, parent);
+		index = parent;
 	}
 }
 
-/* ── Bubble down (after pop) ─────────────────────────────────────── */
-
 /*
-** Element at root has been replaced by the last leaf.
-** Push it down until the heap property is restored.
+** Fait redescendre l'element tant qu'un enfant est plus prioritaire.
 */
-static void	sift_down(t_heap *h, int i)
+static void	sift_down(t_heap *heap, int index)
 {
+	int	left;
+	int	right;
 	int	best;
-	int	l;
-	int	r;
 
 	while (1)
 	{
-		best = i;
-		l = left(i);
-		r = right(i);
-		if (l < h->size && higher_prio(&h->data[l], &h->data[best]))
-			best = l;
-		if (r < h->size && higher_prio(&h->data[r], &h->data[best]))
-			best = r;
-		if (best == i)
+		left = left_index(index);
+		right = right_index(index);
+		best = index;
+		if (left < heap->size
+			&& has_higher_priority(heap->data[left], heap->data[best]))
+			best = left;
+		if (right < heap->size
+			&& has_higher_priority(heap->data[right], heap->data[best]))
+			best = right;
+		if (best == index)
 			break ;
-		swap(h, i, best);
-		i = best;
+		swap_entries(heap, index, best);
+		index = best;
 	}
 }
 
-/* ── Public API ──────────────────────────────────────────────────── */
-
-void	heap_init(t_heap *h)
-{
-	h->size = 0;
-	h->seq_counter = 0;
-}
+/*
+** ================================================================
+** FONCTIONS PUBLIQUES
+** ================================================================
+**
+** Ces fonctions devront plus tard aller dans "heap.c".
+*/
 
 /*
-** Push a new waiter onto the heap.
-** Returns 1 on success, 0 if the heap is full.
+** A appeler pendant l'init.
+**
+** Plus tard, on pourra faire :
+** heap_init(&un_heap, sim->args.nb_coders);
 */
-int	heap_push(t_heap *h, long priority, int coder_id)
+int	heap_init(t_heap *heap, int capacity)
 {
-	int	i;
-
-	if (h->size >= HEAP_MAX)
+	if (!heap || capacity <= 0)
 		return (0);
-	i = h->size;
-	h->data[i].priority = priority;
-	h->data[i].seq = h->seq_counter++;
-	h->data[i].coder_id = coder_id;
-	h->size++;
-	sift_up(h, i);
+	heap->data = malloc(sizeof(t_heap_entry) * capacity);
+	if (!heap->data)
+		return (0);
+	heap->size = 0;
+	heap->capacity = capacity;
+	heap->next_seq = 0;
 	return (1);
 }
 
 /*
-** Remove and return the highest-priority entry.
-** Returns 1 on success, 0 if the heap is empty.
+** A appeler dans le clean.
 */
-int	heap_pop(t_heap *h, t_heap_entry *out)
+void	heap_destroy(t_heap *heap)
 {
-	if (h->size == 0)
+	if (!heap)
+		return ;
+	free(heap->data);
+	heap->data = NULL;
+	heap->size = 0;
+	heap->capacity = 0;
+	heap->next_seq = 0;
+}
+
+/*
+** Ajoute un coder dans la file de priorite.
+**
+** Exemples plus tard :
+** - FIFO : priority = ordre_arrivee
+** - EDF  : priority = deadline_ms
+*/
+int	heap_push(t_heap *heap, long priority, int coder_id)
+{
+	int	index;
+
+	if (!heap || !heap->data)
 		return (0);
-	*out = h->data[0];
-	h->size--;
-	if (h->size > 0)
+	if (heap->size >= heap->capacity)
+		return (0);
+	index = heap->size;
+	heap->data[index].priority = priority;
+	heap->data[index].seq = heap->next_seq;
+	heap->data[index].coder_id = coder_id;
+	heap->next_seq++;
+	heap->size++;
+	sift_up(heap, index);
+	return (1);
+}
+
+/*
+** Retire l'element le plus prioritaire.
+*/
+int	heap_pop(t_heap *heap, t_heap_entry *out)
+{
+	if (!heap || !heap->data || !out)
+		return (0);
+	if (heap->size == 0)
+		return (0);
+	*out = heap->data[0];
+	heap->size--;
+	if (heap->size > 0)
 	{
-		h->data[0] = h->data[h->size];
-		sift_down(h, 0);
+		heap->data[0] = heap->data[heap->size];
+		sift_down(heap, 0);
 	}
 	return (1);
 }
 
 /*
-** Peek at the top without removing it.
-** Returns 1 on success, 0 if empty.
+** Regarde le premier sans le retirer.
 */
-int	heap_peek(t_heap *h, t_heap_entry *out)
+int	heap_peek(t_heap *heap, t_heap_entry *out)
 {
-	if (h->size == 0)
+	if (!heap || !heap->data || !out)
 		return (0);
-	*out = h->data[0];
+	if (heap->size == 0)
+		return (0);
+	*out = heap->data[0];
 	return (1);
 }
 
-int	heap_empty(t_heap *h)
+int	heap_empty(t_heap *heap)
 {
-	return (h->size == 0);
+	if (!heap)
+		return (1);
+	return (heap->size == 0);
 }
+
+/*
+** ================================================================
+** OU METTRE QUOI PLUS TARD
+** ================================================================
+**
+** 1) Dans "heap.h"
+** - t_heap_entry
+** - t_heap
+** - tous les prototypes publics
+**
+** 2) Dans "heap.c"
+** - toutes les fonctions de ce fichier
+**
+** 3) Dans "codexion.h"
+** - il faudra ajouter un ou plusieurs t_heap dans les structures
+**   qui gerent l'attente des dongles
+**
+** 4) Dans la logique du scheduler
+** - quand un coder attend un dongle :
+**   -> heap_push(...)
+** - quand le dongle choisit le prochain :
+**   -> heap_pop(...)
+**
+** Si tu veux, l'etape suivante on fait juste :
+** "comment transformer ce brouillon en vrai heap.h + heap.c"
+** sans encore toucher au scheduler.
+*/
