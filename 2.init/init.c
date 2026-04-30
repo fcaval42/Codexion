@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 13:29:13 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/29 15:05:02 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/30 17:20:18 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ static int	init_dongles(t_sim *sim)
 		sim->dongles[i].id = i;
 		sim->dongles[i].available = 1;
 		sim->dongles[i].available_at_ms = 0;
+		if (!heap_init(&sim->dongles[i].waiting_heap, sim->args.nb_coders))
+			return (0);
 		if (pthread_mutex_init(&sim->dongles[i].mutex, NULL) != 0)
 			return (0);
 		if (pthread_cond_init(&sim->dongles[i].cond, NULL) != 0)
@@ -85,6 +87,7 @@ void	clean_sim(t_sim *sim)
 		i = 0;
 		while (i < sim->args.nb_coders)
 		{
+			heap_destroy(&sim->dongles[i].waiting_heap);
 			pthread_mutex_destroy(&sim->dongles[i].mutex);
 			pthread_cond_destroy(&sim->dongles[i].cond);
 			i++;

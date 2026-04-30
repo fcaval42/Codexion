@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 10:48:04 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/29 16:56:39 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/30 15:56:40 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,25 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <stddef.h>
 
 # define SCHED_FIFO_VAL 0
 # define SCHED_EDF_VAL  1
+
+typedef struct s_heap_entry
+{
+	long			priority;
+	unsigned long	seq;
+	int				coder_id;
+}	t_heap_entry;
+
+typedef struct s_heap
+{
+	t_heap_entry	*data;
+	int				size;
+	int				capacity;
+	unsigned long	next_seq;
+}	t_heap;
 
 typedef struct s_args
 {
@@ -40,6 +56,7 @@ typedef struct s_dongle
 	int				id;
 	int				available;
 	long			available_at_ms;
+	t_heap			waiting_heap;
 	pthread_mutex_t	mutex;
 	pthread_cond_t	cond;
 }	t_dongle;
@@ -104,5 +121,17 @@ void	log_burnout(t_sim *sim, int coder_id);
 // ------ CODER ------ //
 
 void	*coder_routine(void *arg);
+
+// ------ HEAP ------ //
+
+int		heap_init(t_heap *heap, int capacity);
+int		heap_push(t_heap *heap, long pritority, int coder_id);
+int		heap_pop(t_heap *heap, t_heap_entry *out);
+
+// ------ HEAP UTILS ------ //
+
+int		heap_peek(t_heap *heap, t_heap_entry *out);
+int		heap_empty(t_heap *heap);
+void	heap_destroy(t_heap *heap);
 
 #endif

@@ -6,11 +6,11 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 14:24:37 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/30 14:25:08 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/04/30 17:18:34 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "heap.h"
+#include "codexion.h"
 
 static int	has_higher_priority(t_heap_entry a, t_heap_entry b)
 {
@@ -30,6 +30,7 @@ static int	left_index(int index)
 {
 	return (2 * index + 1);
 }
+
 static int	right_index(int index)
 {
 	return (2 * index + 2);
