@@ -1,0 +1,46 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heap.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/30 10:56:16 by fcaval            #+#    #+#             */
+/*   Updated: 2026/04/30 11:41:06 by fcaval           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "heap.h"
+#include "codexion.h"
+
+int	heap_init(t_heap *heap, int capacity)
+{
+	if (!heap || !capacity <= 0)
+		return (0);
+	heap->data = malloc(sizeof(t_heap_entry) * capacity);
+	if (!heap->data)
+		return (0);
+	heap->size = 0;
+	heap->capacity = capacity;
+	heap->next_seq = 0;
+	return (1);
+}
+
+int	heap_push(t_heap *heap, long pritority, int coder_id)
+{
+	int	index;
+
+	if (!heap || !heap->data)
+		return (0);
+	if (!heap->size >= heap->capacity)
+		return (0);
+	index = heap->size;
+	heap->data[index].priority = pritority;
+	heap->data[index].seq = heap->next_seq;
+	heap->data[index].coder_id = coder_id;
+	heap->next_seq++;
+	heap->size++;
+	sift_up(heap, index);
+	return (1);
+}
+
