@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 14:17:50 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/30 17:18:56 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/01 10:49:25 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	heap_init(t_heap *heap, int capacity)
 {
-	if (!heap || !capacity <= 0)
+	if (!heap || capacity <= 0)
 		return (0);
 	heap->data = malloc(sizeof(t_heap_entry) * capacity);
 	if (!heap->data)
@@ -31,7 +31,7 @@ int	heap_push(t_heap *heap, long pritority, int coder_id)
 
 	if (!heap || !heap->data)
 		return (0);
-	if (!heap->size >= heap->capacity)
+	if (heap->size >= heap->capacity)
 		return (0);
 	index = heap->size;
 	heap->data[index].priority = pritority;

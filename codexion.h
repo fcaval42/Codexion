@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 10:48:04 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/30 15:56:40 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/01 15:59:16 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ typedef struct s_coder
 	t_dongle		*left;
 	t_dongle		*right;
 	pthread_t		thread;
+	pthread_mutex_t	state_mutex;
 	struct s_sim	*sim;
 }	t_coder;
 
@@ -133,5 +134,28 @@ int		heap_pop(t_heap *heap, t_heap_entry *out);
 int		heap_peek(t_heap *heap, t_heap_entry *out);
 int		heap_empty(t_heap *heap);
 void	heap_destroy(t_heap *heap);
+
+// ------ HEAP SORT ------ //
+
+void	sift_up(t_heap *heap, int index);
+void	sift_down(t_heap *heap, int index);
+
+// ------ HEAP SORT UTILS ------ //
+
+int		has_higher_priority(t_heap_entry a, t_heap_entry b);
+int		parent_index(int index);
+int		left_index(int index);
+int		right_index(int index);
+void	swap_entries(t_heap *heap, int a, int b);
+
+// ------ DONGLES ------ //
+
+int		take_dongle(t_coder *coder, t_dongle *dongle);
+void	release_dongle(t_sim *sim, t_dongle *dongle);
+
+// ------ MONITOR ------ //
+
+void	*monitor_routine(void *arg);
+void	stop_and_wake_all(t_sim *sim);
 
 #endif

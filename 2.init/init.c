@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 13:29:13 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/30 17:20:18 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/01 16:05:20 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,15 @@ static int	init_coders(t_sim *sim)
 	int	n;
 	int	i;
 
+	i = 0;
 	n = sim->args.nb_coders;
 	sim->coders = malloc(sizeof(t_coder) * n);
 	if (!sim->coders)
 		return (0);
-	i = 0;
 	while (i < n)
 	{
+		if (pthread_mutex_init(&sim->coders[i].state_mutex, NULL) != 0)
+			return (0);
 		sim->coders[i].id = i;
 		sim->coders[i].compile_count = 0;
 		sim->coders[i].last_compile_start_ms = 0;
@@ -97,9 +99,16 @@ void	clean_sim(t_sim *sim)
 	}
 	if (sim->coders)
 	{
+		i = 0;
+		while (i < sim->args.nb_coders)
+		{
+			pthread_mutex_destroy(&sim->coders[i].state_mutex);
+			i++;
+		}
 		free(sim->coders);
 		sim->coders = NULL;
 	}
 	pthread_mutex_destroy(&sim->log_mutex);
 	pthread_mutex_destroy(&sim->stop_mutex);
 }
+

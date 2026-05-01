@@ -6,7 +6,7 @@
 #    By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/04/28 10:07:26 by fcaval            #+#    #+#              #
-#    Updated: 2026/04/30 17:24:00 by fcaval           ###   ########.fr        #
+#    Updated: 2026/05/01 14:17:22 by fcaval           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,11 +20,13 @@ SRCS    = main.c \
           3.thread/coder.c \
           3.thread/sim_state.c \
           3.thread/logs/logs.c \
-          3.thread/logs/log_state.c
-		  4.heap/heap.c
-		  4.heap/heap_utils.c
-		  4.heap/heap_sort.c
-		  4.heap/heap_sort_utils.c
+          3.thread/logs/log_state.c \
+		  4.heap/heap.c \
+		  4.heap/heap_utils.c \
+		  4.heap/heap_sort.c \
+		  4.heap/heap_sort_utils.c \
+		  5.dongles/dongles.c \
+		  6.monitor/monitor.c
 OBJS    = $(SRCS:.c=.o)
 HEADER  = codexion.h
 

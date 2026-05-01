@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:44:03 by fcaval            #+#    #+#             */
-/*   Updated: 2026/04/29 16:58:16 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/01 15:47:34 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,15 @@
 static int	all_done(t_sim *sim)
 {
 	int	i;
+	int	count;
 
 	i = 0;
 	while (i < sim->args.nb_coders)
 	{
-		if (sim->coders[i].compile_count < sim->args.nb_compiles_required)
+		pthread_mutex_lock(&sim->coders[i].state_mutex);
+		count = sim->coders[i].compile_count;
+		pthread_mutex_unlock(&sim->coders[i].state_mutex);
+		if (count < sim->args.nb_compiles_required)
 			return (0);
 		i++;
 	}
@@ -49,13 +53,17 @@ static int	do_compile(t_coder *coder)
 	t_sim	*sim;
 
 	sim = coder->sim;
+	pthread_mutex_lock(&coder->state_mutex);
 	coder->last_compile_start_ms = get_time_ms();
 	coder->deadline_ms = coder->last_compile_start_ms + \
-	sim->args.time_to_burnout;
+		sim->args.time_to_burnout;
+	pthread_mutex_unlock(&coder->state_mutex);
 	log_compiling(sim, coder->id);
 	if (!sleep_ms(sim, sim->args.time_to_compile))
 		return (0);
+	pthread_mutex_lock(&coder->state_mutex);
 	coder->compile_count++;
+	pthread_mutex_unlock(&coder->state_mutex);
 	if (all_done(sim))
 	{
 		sim_stopped(sim);
@@ -69,7 +77,6 @@ void	*coder_routine(void *arg)
 	t_coder		*coder;
 	t_dongle	*first;
 	t_dongle	*second;
-	t_dongle	*tmp;
 
 	coder = (t_coder *)arg;
 	if (coder->id % 2 == 0)
@@ -78,17 +85,27 @@ void	*coder_routine(void *arg)
 	{
 		first = coder->left;
 		second = coder->right;
-		if (first->id > second->id)
+		if (first == second)
 		{
-			tmp = first;
-			first = second;
-			second = tmp;
-		}
-		pthread_mutex_lock(&first->mutex);
-		if (second != first)
-			pthread_mutex_lock(&second->mutex);
-		if (!do_compile(coder))
+			while (!sim_is_stopped(coder->sim))
+				usleep(500);
 			break ;
+		}
+		if (!take_dongle(coder, first))
+			break ;
+		if (!take_dongle(coder, second))
+		{
+			release_dongle(coder->sim, first);
+			break;
+		}
+		if (!do_compile(coder))
+		{
+			release_dongle(coder->sim, second);
+			release_dongle(coder->sim, first);
+			break ;
+		}
+		release_dongle(coder->sim, second);
+		release_dongle(coder->sim, first);
 		if (!do_debug(coder))
 			break ;
 		if (!do_refactor(coder))
@@ -96,3 +113,4 @@ void	*coder_routine(void *arg)
 	}
 	return (NULL);
 }
+
