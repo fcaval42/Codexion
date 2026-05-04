@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 11:27:06 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/01 14:26:45 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/04 18:23:21 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@ int	lauch_threads(t_sim *sim)
 	int	i;
 
 	sim->start_ms = get_time_ms();
+	i = 0;
+	while (i < sim->args.nb_coders)
+	{
+		sim->coders[i].last_compile_start_ms = sim->start_ms;
+		sim->coders[i].deadline_ms = sim->start_ms + sim->args.time_to_burnout;
+		i++;
+	}
 	i = 0;
 	while (i < sim->args.nb_coders)
 	{

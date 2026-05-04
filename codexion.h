@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 10:48:04 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/01 15:59:16 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/04 15:48:40 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,5 @@ void	release_dongle(t_sim *sim, t_dongle *dongle);
 // ------ MONITOR ------ //
 
 void	*monitor_routine(void *arg);
-void	stop_and_wake_all(t_sim *sim);
 
 #endif

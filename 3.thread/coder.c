@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:44:03 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/01 15:47:34 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/04 18:35:28 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static int	all_done(t_sim *sim)
 			return (0);
 		i++;
 	}
+	printf("\nAll coders have compiled\n");
 	return (1);
 }
 
@@ -71,46 +72,3 @@ static int	do_compile(t_coder *coder)
 	}
 	return (1);
 }
-
-void	*coder_routine(void *arg)
-{
-	t_coder		*coder;
-	t_dongle	*first;
-	t_dongle	*second;
-
-	coder = (t_coder *)arg;
-	if (coder->id % 2 == 0)
-		usleep(1000);
-	while (!sim_is_stopped(coder->sim))
-	{
-		first = coder->left;
-		second = coder->right;
-		if (first == second)
-		{
-			while (!sim_is_stopped(coder->sim))
-				usleep(500);
-			break ;
-		}
-		if (!take_dongle(coder, first))
-			break ;
-		if (!take_dongle(coder, second))
-		{
-			release_dongle(coder->sim, first);
-			break;
-		}
-		if (!do_compile(coder))
-		{
-			release_dongle(coder->sim, second);
-			release_dongle(coder->sim, first);
-			break ;
-		}
-		release_dongle(coder->sim, second);
-		release_dongle(coder->sim, first);
-		if (!do_debug(coder))
-			break ;
-		if (!do_refactor(coder))
-			break ;
-	}
-	return (NULL);
-}
-

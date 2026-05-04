@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 10:54:00 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/01 16:11:39 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/04 18:34:41 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,29 @@ static long	get_request_priority(t_coder *coder)
 	priority = coder->deadline_ms;
 	pthread_mutex_unlock(&coder->state_mutex);
 	return (priority);
+}
+
+static int	can_take_dongle(t_dongle *dongle, int coder_id, long now,
+	t_heap_entry *top)
+{
+	if (!heap_peek(&dongle->waiting_heap, top))
+		return (0);
+	if (top->coder_id != coder_id)
+		return (0);
+	if (!dongle->available)
+		return (0);
+	if (now < dongle->available_at_ms)
+		return (0);
+	return (1);
+}
+
+static int	grant_dongle(t_coder *coder, t_dongle *dongle, t_heap_entry *top)
+{
+	heap_pop(&dongle->waiting_heap, top);
+	dongle->available = 0;
+	pthread_mutex_unlock(&dongle->mutex);
+	log_taken_dongle(coder->sim, coder->id);
+	return (1);
 }
 
 int	take_dongle(t_coder *coder, t_dongle *dongle)
@@ -40,16 +63,9 @@ int	take_dongle(t_coder *coder, t_dongle *dongle)
 	while (!sim_is_stopped(coder->sim))
 	{
 		now = get_time_ms();
-		if (heap_peek(&dongle->waiting_heap, &top)
-			&& top.coder_id == coder->id
-			&& dongle->available
-			&& now >= dongle->available_at_ms)
+		if (can_take_dongle(dongle, coder->id, now, &top))
 		{
-			heap_pop(&dongle->waiting_heap, &top);
-			dongle->available = 0;
-			pthread_mutex_unlock(&dongle->mutex);
-			log_taken_dongle(coder->sim, coder->id);
-			return (1);
+			return (grant_dongle(coder, dongle, &top));
 		}
 		pthread_mutex_unlock(&dongle->mutex);
 		usleep(500);
@@ -64,6 +80,13 @@ void	release_dongle(t_sim *sim, t_dongle *dongle)
 	pthread_mutex_lock(&dongle->mutex);
 	dongle->available = 1;
 	dongle->available_at_ms = get_time_ms() + sim->args.dongle_cooldown;
-	pthread_cond_broadcast(&dongle->cond);
 	pthread_mutex_unlock(&dongle->mutex);
 }
+
+//you can take it in after priority
+	//printf("\nBONUS DEBUG request: coder=%d dongle=%d priority=%ld
+	//deadline=%ld\n", coder->id, dongle->id, priority, coder->deadline_ms);
+
+//you can take it in if(can_take_dongle)
+	//printf("BONUS DEBUG grant: dongle=%d -> coder=%d top_priority=%ld\n",
+	//dongle->id, coder->id, top.priority);

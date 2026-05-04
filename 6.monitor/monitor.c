@@ -6,26 +6,11 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:39:02 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/01 15:59:06 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/04 15:40:19 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-void	stop_and_wake_all(t_sim *sim)
-{
-	int	i;
-
-	sim_stopped(sim);
-	i = 0;
-	while (i < sim->args.nb_coders)
-	{
-		pthread_mutex_lock(&sim->dongles[i].mutex);
-		pthread_cond_broadcast(&sim->dongles[i].cond);
-		pthread_mutex_unlock(&sim->dongles[i].mutex);
-		i++;
-	}
-}
 
 static int	coder_is_burned(t_sim *sim, int i, long now)
 {
@@ -61,7 +46,7 @@ void	*monitor_routine(void *arg)
 			if (coder_is_burned(sim, i, now))
 			{
 				log_burnout(sim, sim->coders[i].id);
-				stop_and_wake_all(sim);
+				sim_stopped(sim);
 				return (NULL);
 			}
 			i++;

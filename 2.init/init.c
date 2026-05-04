@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 13:29:13 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/01 16:05:20 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/04 18:35:16 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static int	init_coders(t_sim *sim)
 	{
 		if (pthread_mutex_init(&sim->coders[i].state_mutex, NULL) != 0)
 			return (0);
-		sim->coders[i].id = i;
+		sim->coders[i].id = i + 1;
 		sim->coders[i].compile_count = 0;
 		sim->coders[i].last_compile_start_ms = 0;
 		sim->coders[i].deadline_ms = 0;
@@ -79,36 +79,3 @@ int	init_sim(t_sim *sim, t_args *args)
 		return (0);
 	return (1);
 }
-
-void	clean_sim(t_sim *sim)
-{
-	int	i;
-
-	if (sim->dongles)
-	{
-		i = 0;
-		while (i < sim->args.nb_coders)
-		{
-			heap_destroy(&sim->dongles[i].waiting_heap);
-			pthread_mutex_destroy(&sim->dongles[i].mutex);
-			pthread_cond_destroy(&sim->dongles[i].cond);
-			i++;
-		}
-		free(sim->dongles);
-		sim->dongles = NULL;
-	}
-	if (sim->coders)
-	{
-		i = 0;
-		while (i < sim->args.nb_coders)
-		{
-			pthread_mutex_destroy(&sim->coders[i].state_mutex);
-			i++;
-		}
-		free(sim->coders);
-		sim->coders = NULL;
-	}
-	pthread_mutex_destroy(&sim->log_mutex);
-	pthread_mutex_destroy(&sim->stop_mutex);
-}
-
