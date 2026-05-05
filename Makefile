@@ -6,7 +6,7 @@
 #    By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/04/28 10:07:26 by fcaval            #+#    #+#              #
-#    Updated: 2026/05/01 14:17:22 by fcaval           ###   ########.fr        #
+#    Updated: 2026/05/05 10:55:17 by fcaval           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,10 @@ SRCS    = main.c \
           1.parsing/parsing.c \
           1.parsing/utils.c \
           2.init/init.c \
+		  2.init/clean.c \
           3.thread/coder.c \
           3.thread/sim_state.c \
+		  3.thread/coder_routine.c \
           3.thread/logs/logs.c \
           3.thread/logs/log_state.c \
 		  4.heap/heap.c \

@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 10:48:04 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/04 15:48:40 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/05 10:56:28 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,9 @@ void	log_burnout(t_sim *sim, int coder_id);
 // ------ CODER ------ //
 
 void	*coder_routine(void *arg);
+int		do_compile(t_coder *coder);
+int		do_refactor(t_coder *coder);
+int		do_debug(t_coder *coder);
 
 // ------ HEAP ------ //
 

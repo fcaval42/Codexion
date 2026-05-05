@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:44:03 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/04 18:35:28 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/05 10:47:49 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	all_done(t_sim *sim)
 	return (1);
 }
 
-static int	do_debug(t_coder *coder)
+int	do_debug(t_coder *coder)
 {
 	t_sim	*sim;
 
@@ -40,7 +40,7 @@ static int	do_debug(t_coder *coder)
 	return (sleep_ms(sim, sim->args.time_to_debug));
 }
 
-static int	do_refactor(t_coder *coder)
+int	do_refactor(t_coder *coder)
 {
 	t_sim	*sim;
 
@@ -49,7 +49,7 @@ static int	do_refactor(t_coder *coder)
 	return (sleep_ms(sim, sim->args.time_to_refactor));
 }
 
-static int	do_compile(t_coder *coder)
+int	do_compile(t_coder *coder)
 {
 	t_sim	*sim;
 
