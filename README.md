@@ -43,16 +43,8 @@ That makes the problem a classic concurrency challenge close to the dining philo
 
 ## 👀 Visual Overview
 
-### Circular layout
+```
 
-```text
-          [Dongle 1]
-      Coder 1     Coder 2
- [Dongle 0]         [Dongle 2]
-      Coder 5     Coder 3
-          [Dongle 4]
-              Coder 4
-              [Dongle 3]
 ```
 
 Each coder uses:
@@ -85,9 +77,7 @@ Monitor thread:
 
 ### Requirements
 
-- `cc`
 - `make`
-- POSIX threads support
 
 ### Compilation
 
