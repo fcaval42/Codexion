@@ -225,16 +225,6 @@ They protect:
 | simulation stop flag | `stop_mutex` |
 | logs / terminal output | `log_mutex` |
 
-### `pthread_cond_t`
-
-`pthread_cond_t` is declared and initialized for dongles because it is allowed by the subject.  
-In the current version of the project, the final waiting logic is based on:
-
-- mutexes
-- polling with short `usleep`
-- heap-based arbitration
-
-So condition variables are **not actively used in the final wait path**.
 
 ### Thread-Safe Communication
 
@@ -340,7 +330,6 @@ In both cases, a shared stop flag is set and the threads progressively exit thei
 - `man pthread_create`
 - `man pthread_mutex_init`
 - `man pthread_mutex_lock`
-- `man pthread_cond_init`
 - `man gettimeofday`
 - The dining philosophers problem
 - General documentation about EDF scheduling and fairness in concurrent systems
@@ -359,7 +348,5 @@ All generated ideas had to be reviewed, understood, tested, and adapted to the a
 
 ## 🌱 Possible Improvements
 
-- replace polling-based waits with a fully condition-variable-based design
 - add more debug tooling for comparing FIFO and EDF behavior
 - improve visual tracing for deadlines and waiting queues
-- add a richer test harness for edge-case timing analysis
