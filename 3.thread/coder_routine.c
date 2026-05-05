@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 18:26:36 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/04 18:27:05 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/05 14:14:51 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ void	*coder_routine(void *arg)
 	{
 		first = coder->left;
 		second = coder->right;
+		if (first->id > second->id)
+		{
+			first = coder->right;
+			second = coder->left;
+		}
 		if (!acquire_dongles(coder, first, second))
 			break ;
 		if (!run_cycle(coder, first, second))
