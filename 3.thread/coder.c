@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 17:44:03 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/05 14:22:20 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/06 11:04:20 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ static int	all_done(t_sim *sim)
 			return (0);
 		i++;
 	}
-	usleep(10);
 	printf("\nAll coders have compiled\n");
 	return (1);
 }
