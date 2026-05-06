@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 10:54:00 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/06 12:05:35 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/06 13:28:47 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ int	take_dongle(t_coder *coder, t_dongle *dongle)
 		pthread_mutex_unlock(&dongle->mutex);
 		return (0);
 	}
-	//pthread_mutex_unlock(&dongle->mutex); //ICI
-	//usleep(100); //ICI
 	while (!sim_is_stopped(coder->sim))
 	{
 		now = get_time_ms();

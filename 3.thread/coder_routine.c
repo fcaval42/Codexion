@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 18:26:36 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/06 11:38:44 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/06 13:29:10 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	*coder_routine(void *arg)
 
 	coder = (t_coder *)arg;
 	if (coder->id % 2 == 0)
-		usleep(1000) ;
+		usleep(1000);
 	while (!sim_is_stopped(coder->sim))
 	{
 		first = coder->left;

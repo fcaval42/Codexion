@@ -83,6 +83,11 @@ run_named_test() {
 				"3 1000 600 10 10 5 100 edf" \
 				"cas serre, EDF doit favoriser le codeur le plus urgent"
 			;;
+		bonus_edf)
+			run_test "bonus_edf" \
+			"4 2000 200 100 100 3 20 edf" \
+			"cas simple sur un ms court"
+			;; 
 		immediate_burnout)
 			run_test "immediate_burnout" \
 				"2 1 200 200 200 5 10 fifo" \

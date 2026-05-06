@@ -6,7 +6,7 @@
 /*   By: fcaval <fcaval@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/30 14:24:37 by fcaval            #+#    #+#             */
-/*   Updated: 2026/05/06 12:05:48 by fcaval           ###   ########.fr       */
+/*   Updated: 2026/05/06 13:29:15 by fcaval           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 int	has_higher_priority(t_heap_entry a, t_heap_entry b)
 {
-
 	if (a.priority < b.priority)
 		return (1);
 	if (a.priority > b.priority)
